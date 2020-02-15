@@ -9,6 +9,25 @@ use Illuminate\Http\Response;
 
 class TurnsController extends Controller {
 
+    public function index()
+    {
+        $turns = Turn::query()
+            ->includeInactiveForAdmins(auth()->check())
+            ->orderBy('schedule')
+            ->paginate(request('paginate') ?? 10);
+
+        $pagination_data = $this->getPaginationInfo($turns);
+
+        return response()->json([
+            'data'    => [
+                'turns' => TurnResource::collection($turns),
+                'links' => $pagination_data['links'],
+                'meta'  => $pagination_data['meta'],
+            ],
+            'message' => 'A list of all the turns in the system.',
+        ]);
+    }
+
     public function store(CreateTurnRequest $request)
     {
         $turn = Turn::create($request->validated());

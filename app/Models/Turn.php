@@ -8,5 +8,15 @@ class Turn extends Model
 {
     protected $guarded = [];
 
+    public function scopeActive($query)
+    {
+        return $query->whereStatus(true);
+    }
 
+    public function scopeIncludeInactiveForAdmins($query, $is_admin)
+    {
+        return $query->when( ! $is_admin, function ($query, $is_admin) {
+            return $query->active();
+        });
+    }
 }

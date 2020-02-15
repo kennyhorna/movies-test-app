@@ -69,4 +69,63 @@ class TurnsTest extends TestCase {
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonStructure(['message']);
     }
+
+    /**
+     * @test
+     * Test for: As a Guest, a want to list turns.
+     */
+    public function as_a_guest_a_want_to_list_turns()
+    {
+        $this->withoutExceptionHandling();
+        // Given several existent turns in the system
+        factory(Turn::class, 50)->create();
+        // When the request is made
+        $response = $this->json('GET', 'api/turns');
+        // Then the data should be returned and ordered by schedule.
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'turns' => [
+                        '*' => [
+                            'schedule',
+                        ],
+                    ],
+                    'links',
+                    'meta',
+                ]
+            ])
+            ->assertJsonCount(10, 'data.turns');
+    }
+
+    /**
+    * @test
+    * Test for: an Administrator can list turns including the inactive ones.
+    */
+    public function an_administrator_can_list_turns_including_the_inactive_ones()
+    {
+        // Given several existent turns in the system
+        factory(Turn::class, 50)->create();
+        // Given a logged-in administrator
+        $this->loginAsAdmin();
+        // When the request is made
+        $response = $this->json('GET', 'api/turns');
+        // Then the data should be returned and ordered by schedule.
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'turns' => [
+                        '*' => [
+                            'schedule', 'status',
+                        ],
+                    ],
+                    'links',
+                    'meta',
+                ]
+            ])
+            ->assertJsonCount(10, 'data.turns');
+    }
 }

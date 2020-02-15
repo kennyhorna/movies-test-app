@@ -14,9 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['middlware' => 'auth:api'], function () {
-    Route::post('/turns')->uses('TurnsController@store')->name('turns.index');
+    Route::post('/turns')->uses('TurnsController@store')->name('turns.store');
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/turns')->uses('TurnsController@index')->name('turns.index');

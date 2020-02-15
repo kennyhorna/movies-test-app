@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property mixed schedule
+ * @property mixed status
+ */
 class TurnResource extends JsonResource
 {
     /**
@@ -14,6 +18,9 @@ class TurnResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'schedule' => $this->schedule,
+            'status' => $this->when(auth()->check(), (boolean) $this->status),
+        ];
     }
 }
