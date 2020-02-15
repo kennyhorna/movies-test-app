@@ -128,4 +128,44 @@ class TurnsTest extends TestCase {
             ])
             ->assertJsonCount(10, 'data.turns');
     }
+
+    /**
+     * @test
+     * Test for: An Administrator can update the details of a given turn.
+     */
+    public function an_administrator_can_update_the_details_of_a_given_turn()
+    {
+        $this->withoutExceptionHandling();
+        // Given a logged-in administrator
+        $this->loginAsAdmin();
+        // Given an existent turn
+        $turn = factory(Turn::class)->create();
+        // Given a valid data to update
+        $data = ['status' => false];
+        // When the request is made
+        $response = $this->json('PATCH', "/api/turns/{$turn->id}", $data);
+        // Then the turn should be updated
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonFragment(['status' => false]);
+    }
+
+    /**
+     * @test
+     * Test for: a schedule Turn cannot be updated to match another schedule Turn.
+     */
+    public function a_schedule_turn_cannot_be_updated_to_match_another_schedule_turn()
+    {
+        // Given a logged-in administrator
+        $this->loginAsAdmin();
+        // Given two existent turns
+        factory(Turn::class)->create(['schedule' => '15:30']);
+        $turn = factory(Turn::class)->create();
+        // Given a an existent turn schedule
+        $data = ['schedule' => '15:30'];
+        // When the request is made
+        $response = $this->json('PATCH', "/api/turns/{$turn->id}", $data);
+        // Then the turn should be updated
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 }
