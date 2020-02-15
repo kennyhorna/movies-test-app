@@ -29,6 +29,7 @@ class TurnsTest extends TestCase {
             ])
             ->assertJsonFragment([
                 'schedule' => '15:30',
+                'status' => true,
             ]);
     }
 

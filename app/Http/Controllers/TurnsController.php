@@ -47,7 +47,7 @@ class TurnsController extends Controller {
      */
     public function store(CreateTurnRequest $request)
     {
-        $turn = Turn::create($request->validated());
+        $turn = Turn::create($request->validated())->refresh();
 
         return response()->json([
             'data'    => [
