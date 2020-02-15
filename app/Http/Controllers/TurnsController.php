@@ -78,4 +78,14 @@ class TurnsController extends Controller {
             'message' => 'The turn has been successfully updated.',
         ], Response::HTTP_OK);
     }
+
+    public function destroy(Turn $turn)
+    {
+        $turn->delete();
+
+        return response()->json([
+            'data'    => [],
+            'message' => 'The turn has been successfully deleted.',
+        ], Response::HTTP_OK);
+    }
 }
