@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middlware' => 'auth:api'], function () {
+    Route::post('/turns')->uses('TurnsController@store')->name('turns.store');
+    Route::patch('/turns/{turn}')->uses('TurnsController@update')->name('turns.update');
+    Route::delete('/turns/{turn}')->uses('TurnsController@destroy')->name('turns.destroy');
 });
+
+Route::get('/turns')->uses('TurnsController@index')->name('turns.index');
