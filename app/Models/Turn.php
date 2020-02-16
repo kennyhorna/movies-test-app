@@ -18,6 +18,11 @@ class Turn extends Model
         return $query->whereStatus(true);
     }
 
+    public function movies()
+    {
+        return $this->belongsToMany(Movie::class);
+    }
+
     public function scopeIncludeInactiveForAdmins($query, $is_admin)
     {
         return $query->when( ! $is_admin, function ($query, $is_admin) {

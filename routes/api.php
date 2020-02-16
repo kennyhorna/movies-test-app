@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,6 +19,7 @@ Route::group(['middlware' => 'auth:api'], function () {
     // MOVIE Endpoints
     Route::post('/movies')->uses('MoviesController@store')->name('movies.store');
     Route::patch('/movies/{movie}')->uses('MoviesController@update')->name('movies.update');
+    Route::delete('/movies/{movie}')->uses('MoviesController@destroy')->name('movies.destroy');
 });
 
 Route::get('/turns')->uses('TurnsController@index')->name('turns.index');

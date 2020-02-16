@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -55,6 +56,14 @@ class Handler extends ExceptionHandler
         {
             return response()->json([
                 'message' => "There isn't a match in our records for the given identifier.",
+                'data'    => [],
+            ], 404);
+        }
+
+        if  ($exception instanceof NotFoundHttpException)
+        {
+            return response()->json([
+                'message' => "The path that you are trying to reach doesn't exist in the system. Check the url again.",
                 'data'    => [],
             ], 404);
         }

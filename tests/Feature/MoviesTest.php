@@ -104,4 +104,20 @@ class MoviesTest extends TestCase {
             ->assertJsonFragment(['name' => 'Some other name']);
     }
 
+    /**
+    * @test
+    * Test for: An Administrator can delete a movie
+    */
+    public function AN_ADMINISTRATOR_CAN_DELETE_A_MOVIE()
+    {
+        // Given a logged-in admin
+        $this->loginAsAdmin();
+        // Given a movie
+        $movie = factory(Movie::class)->create();
+        // When the request is made
+        $response = $this->json('DELETE', "/api/movies/{$movie->id}", []);
+        // Then the movie is deleted
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertDatabaseMissing('movies', ['id' => $movie->id]);
+    }
 }

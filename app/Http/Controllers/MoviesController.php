@@ -78,6 +78,17 @@ class MoviesController extends Controller {
 
     }
 
+    public function destroy(Movie $movie)
+    {
+        $movie->turns()->detach();
+        $movie->delete();
+
+        return response()->json([
+            'data'    => [],
+            'message' => 'The movie has been successfully deleted.',
+        ], Response::HTTP_OK);
+    }
+
     private function deleteOldImage($image)
     {
         $segments = explode('/', $image);
