@@ -18,6 +18,15 @@ class CreateMovieTurnTable extends Migration
             $table->unsignedBigInteger('movie_id');
             $table->unsignedBigInteger('turn_id');
             $table->timestamps();
+
+            $table->foreign('movie_id')
+                ->references('id')
+                ->on('movies')
+                ->onDelete('cascade');
+            $table->foreign('turn_id')
+                ->references('id')
+                ->on('turns')
+                ->onDelete('cascade');
         });
     }
 

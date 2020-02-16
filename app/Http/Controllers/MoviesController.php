@@ -7,13 +7,34 @@ use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MoviesController extends Controller {
+
+    public function index()
+    {
+        $turns = Movie::query()
+            ->includeInactiveForAdmins(auth()->check())
+            ->orderByField(request()->only('order_by', 'mode'))
+            ->paginate(request('paginate') ?? 10);
+
+        $pagination_data = $this->getPaginationInfo($turns);
+
+        return response()->json([
+            'data'    => [
+                'movies' => MovieResource::collection($turns),
+                'links' => $pagination_data['links'],
+                'meta'  => $pagination_data['meta'],
+            ],
+            'message' => 'A list of all the movies in the system.',
+        ]);
+    }
 
     public function store(CreateMovieRequest $request)
     {
         $movie = DB::transaction(function () use ($request) {
             $data = $request->only('name', 'release_date', 'status', 'image');
+            $data['image'] = Storage::disk('movie_files')->put('', $data['image']);
             $movie = Movie::create($data)->fresh();
             $movie->turns()->attach($request->get('turns'));
 

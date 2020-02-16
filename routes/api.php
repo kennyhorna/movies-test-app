@@ -23,3 +23,4 @@ Route::group(['middlware' => 'auth:api'], function () {
 });
 
 Route::get('/turns')->uses('TurnsController@index')->name('turns.index');
+Route::get('/movies')->uses('MoviesController@index')->name('movies.index');

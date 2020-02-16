@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Movie;
 use App\Models\Turn;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -35,7 +37,7 @@ class MoviesTest extends TestCase {
             'turns'        => [1, 2],
         ];
         // When the request is made
-        $response = $this->json('POST', 'api/movies', $data); dd($response->json());
+        $response = $this->json('POST', 'api/movies', $data);
         // Then it should return the newly created movie
         $response
             ->assertStatus(Response::HTTP_CREATED)
@@ -44,6 +46,35 @@ class MoviesTest extends TestCase {
                 'message',
             ])
             ->assertJsonFragment(['name' => 'Batman: The Dark Knight']);
+    }
+
+    /**
+    * @test
+    * Test for: a Guest can list all the active movies.
+    */
+    public function a_guest_can_list_all_the_active_movies()
+    {
+        $this->withoutExceptionHandling();
+        // Given existing movies
+        factory(Movie::class, 50)->create();
+        // When the request is made
+        $response = $this->json('GET', 'api/movies?field=release_date&mode=asc');
+        // Then it should return the active movie list
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'message',
+                'data' => [
+                    'movies' => [
+                        '*' => [
+                            'name', 'release_date', 'image', 'turns',
+                        ],
+                    ],
+                    'links',
+                    'meta',
+                ]
+            ])
+            ->assertJsonCount(10, 'data.movies');
     }
 
 }
