@@ -20,6 +20,7 @@ Route::group(['middlware' => 'auth:api'], function () {
     Route::delete('/turns/{turn}')->uses('TurnsController@destroy')->name('turns.destroy');
     // MOVIE Endpoints
     Route::post('/movies')->uses('MoviesController@store')->name('movies.store');
+    Route::patch('/movies/{movie}')->uses('MoviesController@update')->name('movies.update');
 });
 
 Route::get('/turns')->uses('TurnsController@index')->name('turns.index');

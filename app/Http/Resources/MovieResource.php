@@ -15,6 +15,7 @@ class MovieResource extends JsonResource {
     public function toArray($request)
     {
         return [
+            'id'           => $this->id,
             'name'         => $this->name,
             'release_date' => $this->release_date,
             'status'       => (bool) $this->status,

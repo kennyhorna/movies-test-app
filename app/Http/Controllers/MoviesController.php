@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Movies\CreateMovieRequest;
+use App\Http\Requests\Movies\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\Response;
@@ -38,7 +39,6 @@ class MoviesController extends Controller {
             $movie = Movie::create($data)->fresh();
             $movie->turns()->attach($request->get('turns'));
 
-
             return $movie;
         });
 
@@ -48,5 +48,40 @@ class MoviesController extends Controller {
             ],
             'message' => 'The movie has been successfully created.',
         ], Response::HTTP_CREATED);
+    }
+
+    public function update(UpdateMovieRequest $request, Movie $movie)
+    {
+        $movie = DB::transaction(function () use ($request, $movie) {
+            $data = $request->only('name', 'release_date', 'status', 'image');
+            if ($request->has('image'))
+            {
+                $data['image'] = Storage::disk('movie_files')->put('', $data['image']);
+                $this->deleteOldImage($movie['image']);
+            }
+            $movie = tap($movie)->update($data)->fresh();
+
+            if ($request->has('turns'))
+            {
+                $movie->turns()->sync($request->get('turns'));
+            }
+
+            return $movie;
+        });
+
+        return response()->json([
+            'data'    => [
+                'movie' => new MovieResource($movie->load('turns')),
+            ],
+            'message' => 'The movie has been successfully created.',
+        ], Response::HTTP_OK);
+
+    }
+
+    private function deleteOldImage($image)
+    {
+        $segments = explode('/', $image);
+        $name = array_pop($segments);
+        Storage::disk('movie_files')->delete($name);
     }
 }

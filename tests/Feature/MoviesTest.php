@@ -6,7 +6,6 @@ use App\Models\Movie;
 use App\Models\Turn;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -75,6 +74,34 @@ class MoviesTest extends TestCase {
                 ]
             ])
             ->assertJsonCount(10, 'data.movies');
+    }
+
+    /**
+     * @test
+     * Test for: An Administrator can update a movie.
+     */
+    public function an_administrator_can_update_a_movie()
+    {
+        $this->withoutExceptionHandling();
+        Storage::fake('movie_files', [
+            'root' => storage_path('app/public'),
+            'url'  => env('APP_URL') . '/storage/movies',
+        ]);
+        // Given a logged-in administrator
+        $this->loginAsAdmin();
+        // Given an existing movie
+        $movie = factory(Movie::class)->create();
+        // Given valid update data
+        $data = [
+            'name'  => 'Some other name',
+            'image' => UploadedFile::fake()->image('other.jpg', 500, 500),
+        ];
+        // When the request is made
+        $response = $this->json('PATCH', "api/movies/{$movie->id}", $data);
+        // Then the movie is updated
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonFragment(['name' => 'Some other name']);
     }
 
 }
