@@ -23,6 +23,10 @@ This will create an admin user with the following credentials with which you can
 
 The rest of entitites are empty, but of course, you could use the configurated factories to generate data.
 
+Finally, install Laravel Passport doing:
+
+    php artisan passport:install
+
 ----
 
 
