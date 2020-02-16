@@ -3,29 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class Turn extends Model
-{
+class Movie extends Model {
+
     protected $guarded = [];
 
-    protected $casts = [
-        'status' => 'boolean',
-    ];
+    public function turns()
+    {
+        return $this->belongsToMany(Turn::class);
+    }
+
+    public function getImageAttribute()
+    {
+        return Storage::disk('movie_files')->url($this->attributes['image']);
+    }
 
     public function scopeActive($query)
     {
         return $query->whereStatus(true);
     }
 
-    public function movies()
-    {
-        return $this->belongsToMany(Movie::class);
-    }
-
     public function scopeIncludeInactiveForAdmins($query, $is_admin)
     {
-        return $query->when( ! $is_admin, function ($query, $is_admin) {
+        return $query->when(! $is_admin, function ($query, $is_admin) {
             return $query->active();
         });
     }
@@ -50,7 +52,7 @@ class Turn extends Model
 
     private function acceptableSortingField($field)
     {
-        return in_array(Str::lower($field), ['id', 'schedule', 'status']);
+        return in_array(Str::lower($field), ['id', 'name', 'release_date', 'status']);
     }
 
     private function acceptableSortingMode($mode)

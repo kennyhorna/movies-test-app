@@ -81,7 +81,7 @@ class TurnsTest extends TestCase {
         // Given several existent turns in the system
         factory(Turn::class, 50)->create();
         // When the request is made
-        $response = $this->json('GET', 'api/turns');
+        $response = $this->json('GET', 'api/turns?order_by=status&mode=desc');
         // Then the data should be returned and ordered by schedule.
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -206,7 +206,7 @@ class TurnsTest extends TestCase {
         $response = $this->json('DELETE', "api/turns/180", []);
         // Then the data should be returned and ordered by schedule.
         $response
-            ->assertStatus(Response::HTTP_OK)
+            ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertJsonStructure([
                 'message',
                 'data'

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,9 +12,15 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['middlware' => 'auth:api'], function () {
+    // TURN Endpoints
     Route::post('/turns')->uses('TurnsController@store')->name('turns.store');
     Route::patch('/turns/{turn}')->uses('TurnsController@update')->name('turns.update');
     Route::delete('/turns/{turn}')->uses('TurnsController@destroy')->name('turns.destroy');
+    // MOVIE Endpoints
+    Route::post('/movies')->uses('MoviesController@store')->name('movies.store');
+    Route::patch('/movies/{movie}')->uses('MoviesController@update')->name('movies.update');
+    Route::delete('/movies/{movie}')->uses('MoviesController@destroy')->name('movies.destroy');
 });
 
 Route::get('/turns')->uses('TurnsController@index')->name('turns.index');
+Route::get('/movies')->uses('MoviesController@index')->name('movies.index');

@@ -24,7 +24,7 @@ class UpdateTurnRequest extends FormRequest
     public function rules()
     {
         return [
-            'schedule' => 'unique:turns,schedule,' . $this->id,
+            'schedule' => 'unique:turns,schedule,' . $this->turn->id,
             'status' => 'boolean',
         ];
     }

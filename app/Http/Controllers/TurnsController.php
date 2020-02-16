@@ -81,6 +81,7 @@ class TurnsController extends Controller {
 
     public function destroy(Turn $turn)
     {
+        $turn->movies()->detach();
         $turn->delete();
 
         return response()->json([
