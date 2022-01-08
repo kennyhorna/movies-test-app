@@ -30,7 +30,7 @@ class Movie extends Model
 
     public function getImageAttribute(): string
     {
-        return Storage::disk('movie_files')->url($this->attributes['image']);
+        return Storage::disk('movie_files')->url($this->image);
     }
 
     public function scopeActive($query)

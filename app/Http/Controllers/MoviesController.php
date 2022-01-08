@@ -35,7 +35,7 @@ class MoviesController extends Controller {
     {
         $movie = DB::transaction(function () use ($request) {
             $data = $request->only('name', 'release_date', 'status', 'image');
-            $data['image'] = Storage::disk('movie_files')->put('', $data['image']);
+            $data['image'] = $request->file('image')->store('/', 'movie_files');
             $movie = Movie::create($data)->fresh();
             $movie->turns()->attach($request->get('turns'));
 
@@ -56,8 +56,7 @@ class MoviesController extends Controller {
             $data = $request->only('name', 'release_date', 'status', 'image');
             if ($request->has('image'))
             {
-                $data['image'] = Storage::disk('movie_files')->put('', $data['image']);
-                $this->deleteOldImage($movie['image']);
+                $data['image'] = $request->file('image')->store('/', 'movie_files');
             }
             $movie = tap($movie)->update($data)->fresh();
 
@@ -87,12 +86,5 @@ class MoviesController extends Controller {
             'data'    => [],
             'message' => 'The movie has been successfully deleted.',
         ], Response::HTTP_OK);
-    }
-
-    private function deleteOldImage($image)
-    {
-        $segments = explode('/', $image);
-        $name = array_pop($segments);
-        Storage::disk('movie_files')->delete($name);
     }
 }
