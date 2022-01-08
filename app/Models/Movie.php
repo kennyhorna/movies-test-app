@@ -28,9 +28,9 @@ class Movie extends Model
         return $this->belongsToMany(Turn::class);
     }
 
-    public function getImageAttribute(): string
+    public function getImageUrlAttribute(): string
     {
-        return Storage::disk('movie_files')->url($this->image);
+        return Storage::disk('movie_files')->url($this->attributes['image']);
     }
 
     public function scopeActive($query)
