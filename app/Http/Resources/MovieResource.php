@@ -4,23 +4,26 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MovieResource extends JsonResource {
+/**
+ * @property mixed $id
+ * @property mixed $release_date
+ * @property mixed $name
+ * @property mixed $status
+ * @property mixed $image
+ * @property mixed $turns
+ */
+class MovieResource extends JsonResource
+{
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
-            'id'           => $this->id,
-            'name'         => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'release_date' => $this->release_date,
-            'status'       => (bool) $this->status,
-            'image'        => $this->image,
-            'turns'        => $this->whenLoaded('turns', TurnResource::collection($this->turns)),
+            'status' => (bool)$this->status,
+            'image' => $this->image,
+            'turns' => $this->whenLoaded('turns', TurnResource::collection($this->turns)),
         ];
     }
 }
