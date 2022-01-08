@@ -2,9 +2,16 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 
+/**
+ * @method self includeInactiveForAdmins(bool $isAdmin)
+ * @mixin Eloquent
+ * @mixin Builder
+ */
 class Turn extends Model
 {
     protected $guarded = [];

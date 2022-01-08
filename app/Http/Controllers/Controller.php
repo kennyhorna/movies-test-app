@@ -13,26 +13,22 @@ class Controller extends BaseController
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    /**
-     * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginated_collection
-     * @return array
-     */
-    public function getPaginationInfo($paginated_collection)
+    public function getPaginationInfo(LengthAwarePaginator $paginatedCollection): array
     {
         return [
             'links' => [
-                'first' => $paginated_collection->url(1),
-                'last'  => $paginated_collection->url($paginated_collection->lastPage()),
-                'next'  => $paginated_collection->nextPageUrl(),
-                'prev'  => $paginated_collection->previousPageUrl(),
+                'first' => $paginatedCollection->url(1),
+                'last' => $paginatedCollection->url($paginatedCollection->lastPage()),
+                'next' => $paginatedCollection->nextPageUrl(),
+                'prev' => $paginatedCollection->previousPageUrl(),
             ],
-            'meta'  => [
-                'current_page' => $paginated_collection->currentPage(),
-                'from'         => $paginated_collection->firstItem(),
-                'to'           => $paginated_collection->lastItem(),
-                'total'        => $paginated_collection->total(),
-                'last_page'    => $paginated_collection->lastPage(),
-                'per_page'     => $paginated_collection->perPage(),
+            'meta' => [
+                'current_page' => $paginatedCollection->currentPage(),
+                'from' => $paginatedCollection->firstItem(),
+                'to' => $paginatedCollection->lastItem(),
+                'total' => $paginatedCollection->total(),
+                'last_page' => $paginatedCollection->lastPage(),
+                'per_page' => $paginatedCollection->perPage(),
             ],
         ];
     }

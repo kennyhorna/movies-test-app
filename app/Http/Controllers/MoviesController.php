@@ -6,16 +6,16 @@ use App\Http\Requests\Movies\CreateMovieRequest;
 use App\Http\Requests\Movies\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MoviesController extends Controller {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $turns = Movie::query()
-            ->includeInactiveForAdmins(auth()->check())
+        $turns = Movie::includeInactiveForAdmins(auth()->check())
             ->orderByField(request()->only('order_by', 'mode'))
             ->paginate(request('paginate') ?? 10);
 
@@ -31,7 +31,7 @@ class MoviesController extends Controller {
         ]);
     }
 
-    public function store(CreateMovieRequest $request)
+    public function store(CreateMovieRequest $request): JsonResponse
     {
         $movie = DB::transaction(function () use ($request) {
             $data = $request->only('name', 'release_date', 'status', 'image');
@@ -50,7 +50,7 @@ class MoviesController extends Controller {
         ], Response::HTTP_CREATED);
     }
 
-    public function update(UpdateMovieRequest $request, Movie $movie)
+    public function update(UpdateMovieRequest $request, Movie $movie): JsonResponse
     {
         $movie = DB::transaction(function () use ($request, $movie) {
             $data = $request->only('name', 'release_date', 'status', 'image');
@@ -78,7 +78,7 @@ class MoviesController extends Controller {
 
     }
 
-    public function destroy(Movie $movie)
+    public function destroy(Movie $movie): JsonResponse
     {
         $movie->turns()->detach();
         $movie->delete();

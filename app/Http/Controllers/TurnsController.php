@@ -6,6 +6,7 @@ use App\Http\Requests\Turns\CreateTurnRequest;
 use App\Http\Requests\Turns\UpdateTurnRequest;
 use App\Http\Resources\TurnResource;
 use App\Models\Turn;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 /**
@@ -15,15 +16,9 @@ use Illuminate\Http\Response;
  */
 class TurnsController extends Controller {
 
-    /**
-     * List the turns of the system.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        $turns = Turn::query()
-            ->includeInactiveForAdmins(auth()->check())
+        $turns = Turn::includeInactiveForAdmins(auth()->check())
             ->orderBy('schedule')
             ->paginate(request('paginate') ?? 10);
 
@@ -39,13 +34,7 @@ class TurnsController extends Controller {
         ]);
     }
 
-    /**
-     * Store a new turn.
-     *
-     * @param \App\Http\Requests\Turns\CreateTurnRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(CreateTurnRequest $request)
+    public function store(CreateTurnRequest $request): JsonResponse
     {
         $turn = Turn::create($request->validated())->refresh();
 
@@ -57,14 +46,7 @@ class TurnsController extends Controller {
         ], Response::HTTP_CREATED);
     }
 
-    /**
-     * Update turn resource.
-     *
-     * @param \App\Http\Requests\Turns\UpdateTurnRequest $request
-     * @param \App\Models\Turn                           $turn
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(UpdateTurnRequest $request, Turn $turn)
+    public function update(UpdateTurnRequest $request, Turn $turn): JsonResponse
     {
         $turn = tap($turn, function ($turn) use ($request) {
             $turn->update($request->validated());
@@ -79,7 +61,7 @@ class TurnsController extends Controller {
         ], Response::HTTP_OK);
     }
 
-    public function destroy(Turn $turn)
+    public function destroy(Turn $turn): JsonResponse
     {
         $turn->movies()->detach();
         $turn->delete();
